@@ -20,22 +20,26 @@ beta  = 1.0e-9    # Bandwidth on Titan Cray CK6
 dmax = 15360
 d = np.arange(8, dmax, 4) # Data/event (19.2 kb for depletion)
 
+color = {5.7: 'r', 21.3: 'b', 132: 'g'}
+
 for f in [5.7, 21.3, 132]:
     # Calculate time for given numbers of events
-    overhead = (1. + f/mu*(alpha + d*beta))**2 - 1.
+    blocking = 2.*f/mu*(alpha + d*beta)
+    nonblocking = f/mu*(alpha + d*beta)
 
     # Plot overhead
-    plt.loglog(d, overhead, label='$f={0}$'.format(f))
+    plt.loglog(d, blocking, color[f], label='$f={0}$, blocking'.format(f))
+    plt.loglog(d, nonblocking, color[f] + '--', label='$f={0}$, non-blocking'.format(f))
 
 # Print maximum support ratio
-print("c/s = {0}".format(mu/(21.3*(alpha + 15360*beta))))
+print("c/s = {0}".format(mu/(21.3*(alpha + 15360*beta)) + 1))
 
 # Set plotting options
 plt.xlim([0,dmax])
 plt.xlabel(r'Data per event (bytes)', fontsize=16)
-plt.ylabel(r'Overhead per batch ($t/t_0 - 1$)', fontsize=16)
+plt.ylabel(r'Overhead per batch, $\Delta$', fontsize=16)
 plt.grid(True, which='both')
-plt.legend(loc='upper left')
+plt.legend(loc='upper left', prop={'size':12})
 
 # Display plot
 #plt.show()
