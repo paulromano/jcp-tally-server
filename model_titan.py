@@ -13,8 +13,8 @@ matplotlib.rc('font',**{'family':'serif','serif':['Computer Modern']})
 
 # Parameters for Computer
 mu    = 1./140.  # Particles per second on Titan Cray XK6
-alpha = 14.0e-6   # Average ping-pong latency on Titan Cray XK6
-beta  = 1.0e-9    # Bandwidth on Titan Cray CK6
+alpha = 2.0e-6   # Average ping-pong latency on Titan Cray XK6
+beta  = 2.5e-10  # Bandwidth on Titan Cray CK6
 
 # Parameters from OpenMC simulation
 dmax = 15360
@@ -33,6 +33,7 @@ for f in [5.7, 21.3, 132]:
 
 # Print maximum support ratio
 print("c/s = {0}".format(mu/(21.3*(alpha + 15360*beta)) + 1))
+print("overhead = {0}".format(2.*21.3/mu*(alpha + 15360*beta)))
 
 # Set plotting options
 plt.xlim([0,dmax])

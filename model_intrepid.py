@@ -33,6 +33,7 @@ for f in [5.7, 21.3, 132]:
 
 # Print maximum support ratio
 print("c/s = {0}".format(mu/(21.3*(alpha + 15360*beta)) + 1))
+print("overhead = {0}".format(2.*21.3/mu*(alpha + 15360*beta)))
 
 # Set plotting options
 plt.xlim([0,dmax])

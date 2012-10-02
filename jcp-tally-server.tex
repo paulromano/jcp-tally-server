@@ -515,24 +515,29 @@ calculational rate will depend both on the computer architecture as well as the
 specific model chosen.
 
 The Intrepid supercomputer has 40 Blue Gene/P racks with 1024 nodes each. In
-turn, each node has a quad-core PowerPC 450 processor and 2 GB of memory. Tests
-have shown that the average ping-pong message latency on Blue Gene/P is about
-3.53 microseconds and the average ping-pong bandwidth is 0.3852 GB/s
-\cite{bluegene}. Thus, we can infer that $\alpha = 3.53 \cdot 10^{-6} \unit{s}$
-and $\beta = 2.60 \cdot 10^{-9} \unit{s/byte}$ for the Intrepid Blue Gene/P
-supercomputer. For the Monte Carlo Performance Benchmark modified to use 320
-nuclides in the fuel, our tests using OpenMC show that Blue Gene/P can simulate
-about 76 particles per second on each processor, i.e. $\mu = 0.0132
-\unit{s/particle}$. We have chosen to use 320 nuclides in the fuel as this is
-the maximum number of nuclides available in the ENDF/B-VII.0 cross section
-library used in the simulation.
+turn, each node has a quad-core PowerPC 450 processor and 2 GB of
+memory. Results from the HPC Challenge benchmark have shown that the average
+ping-pong message latency on Blue Gene/P is about 3.53 microseconds and the
+average ping-pong bandwidth is 0.3852 GB/s \cite{bluegene}. Thus, we can infer
+that $\alpha = 3.53 \cdot 10^{-6} \unit{s}$ and $\beta = 2.60 \cdot 10^{-9}
+\unit{s/byte}$ for the Intrepid Blue Gene/P supercomputer. For the Monte Carlo
+Performance Benchmark modified to use 320 nuclides in the fuel, our tests using
+OpenMC show that Blue Gene/P can simulate about 76 particles per second on each
+processor, i.e. $\mu = 0.0132 \unit{s/particle}$. We have chosen to use 320
+nuclides in the fuel as this is the maximum number of nuclides available in the
+ENDF/B-VII.0 cross section library used in the simulation.
 
 The Titan supercomputer has 18,688 Cray XK6 compute nodes, each of which has a
 16-core AMD Opteron 6274 processor with 32 GB of memory. The Cray XK6 uses the
-Cray Gemini interconnect which has higher latency but faster bandwidth than the
-interconnect on the Blue Gene/P. The parameters we use here are $1/\mu = 140$,
-$\alpha = 1.4 \cdot 10^{-5} \unit{s}$ and $\beta = 1.0 \cdot 10^{-9}
-\unit{s/byte}$ (NEED REFERENCE/UPDATED DATA FOR TITAN).
+Cray Gemini interconnect which has lower latency and higher bandwidth than the
+interconnect on the Blue Gene/P. Unfortunately, reliable performance
+measurements for the Cray Gemini interconnect are hard to come by. Preliminary
+measurements indicate an MPI latency of about 1.5 microseconds and a peak user
+data injection bandwidth of about 6 GB/s \cite{hlrs-workshop-2011}. We will
+conservatively estimate the latency as $\alpha = 2.0 \cdot 10^{-6} \unit{s}$ and
+the inverse bandwidth as $\beta = 2.5 \cdot 10^{-10} \unit{s/byte}$. Performing
+a simulation of the Monte Carlo performance benchmark on the Cray XK6 as
+described before gives us a particle tracking rate of $1/\mu = 140$.
 
 Let us briefly discuss what values are appropriate to use for $f$, the number of
 events per particle. For the purpose of LWR core analysis, we are only
@@ -563,10 +568,11 @@ bandwidth-dominated region. \autoref{fig:model-titan} shows the estimated
 overhead as a function of $f$ and $d$ for the Titan supercomputer. While the
 Cray XK6 has very high bandwidth, the slower latency and faster processors makes
 the performance approximately equivalent to that of the Blue Gene/P. For $f =
-21.3$ and $d = 15360$, the model predicts an overhead of between 10 and 20
-percent of the total running time for both the Intrepid Blue Gene/P and Titan
-Cray XK6 supercomputers when using blocking communication. If non-blocking
-communication is used, the overhead is expected to be less than 10 percent.
+21.3$ and $d = 15360$, the model predicts an overhead of 14.0 and 3.5 percent of
+the total running time for the Intrepid Blue Gene/P and Titan Cray XK6
+supercomputers, respectively, when using blocking communication. If non-blocking
+communication is used, the overhead is expected to be less than 10 percent on
+Intrepid as well.
 
 \begin{table}[htb]
   \ttabbox[\FBwidth]{
@@ -587,8 +593,6 @@ communication is used, the overhead is expected to be less than 10 percent.
   \end{tabular}
   }
 \end{table}
-
-% TODO: Update figures
 
 \begin{figure}[htb]
   \centering
@@ -612,7 +616,7 @@ number of compute processors that can be supported by one server when using
 blocking communication. For our worst case of $f = 21.3$ and $d = 15360$, the
 constraint implies that on the Intrepid supercomputer we would need one server
 for every 15 compute processors. On the Titan supercomputer, we would need one
-server for every 12 compute processors for the same values of $f$ and $d$.
+server for every 58 compute processors for the same values of $f$ and $d$.
 
 The predicted overhead due to tally servers based on the model in
 \eqref{eq:overhead-blocking} and \eqref{eq:overhead-nonblocking} is quite
@@ -1063,7 +1067,14 @@ server overhead on Titan with increasing $p$. \autoref{fig:titan-cs} shows the
 overhead plotted as a function of $p$ for cases with $d = 15360$. We see that
 the overhead is relatively stable with increasing $p$. However, the cases with
 $c/s = 1$ are clearly outliers with much higher overhead than the other
-cases. (STILL NEED EXPLANATION FOR OUTLIERS).
+cases. This is likely due to network contention since the $c/s = 1$ cases result
+in half of the processor cores on each node sending messages simultaneously. To
+understand in greater depth the variability of the overhead as a function of,
+e.g., the support ratio would likely require a deeper investigation of a
+particular architecture, including topology-aware algorithms and a more
+sophisticated model for network contention. These studies are beyond the scope
+of the present work and are not central to addressing the key questions we set
+out to study.
 
 \begin{figure}[!tbh]
   \centering
@@ -1159,7 +1170,7 @@ Brown for advice and guidance regarding data decomposition.
 
 \section*{References}
 
-\bibliographystyle{unsrt}
+\bibliographystyle{elsarticle-num}
 \bibliography{references}
 
 \end{document}
