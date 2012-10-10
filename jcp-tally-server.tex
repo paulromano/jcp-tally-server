@@ -66,18 +66,19 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
 An algorithm for decomposing large tally data in Monte Carlo particle
-simulations is proposed, analyzed, and implemented/tested in a production Monte
-Carlo code, OpenMC. The algorithm relies on disjoint sets of compute processes
-and servers of which the former simulate particles moving through the geometry
-and the latter runs in a continuous loop receiving scores from the compute
-processors and incrementing tallies. A performance model is developed and shows
-that for a range of parameters relevant to LWR analysis, the tally server
-algorithm should perform with minimal overhead on contemporary
-supercomputers. An implementation of the algorithm in OpenMC was tested on the
-Intrepid and Titan supercomputers and was demonstrated to perform well over a
-wide range of the parameters. The tally server algorithm can thus be used to
-analyze LWR models with a level of fidelity that was heretofore not possible due
-to the need to replicate memory across all processors.
+simulations is developed, analyzed and implemented in a production Monte Carlo
+code, OpenMC. The algorithm is based on a non-overlapping decomposition of
+compute nodes into {\em tracking processors} and {\em tally servers}. The former
+are used simulate the movement of particles through the domain while the latter
+continuously receive and update tally data. A performance model for this
+approach is developed, showing that, for a range of parameters relevant to LWR
+analysis, the tally server algorithm should perform with minimal overhead on
+contemporary supercomputers. An implementation of the algorithm in OpenMC is
+then tested on the Intrepid and Titan supercomputers, supporting the key
+predictions of the model over a wide range of parameters. We thus conclude that
+the tally server algorithm is a successful approach to circumventing classical
+on-node memory constraints en route to unprecedentedly detailed Monte Carlo
+reactor simulations.
 \end{abstract}
 
 \begin{keyword}
@@ -169,8 +170,8 @@ simulation act as \emph{servers}, sending and/or receiving data to \emph{compute
   processes} as needed. In its most general form, the data could be geometry,
 cross sections, and/or tallies. The compute processes handle the actual
 transport of particles from birth to death and communicate with the servers as
-needed. Thus, we see that data decomposition does have some similarity to domain
-decomposition in the sense that the compute processes are still tracking
+needed. Thus, we see that data decomposition does have some similarities to
+domain decomposition in the sense that the compute processes are still tracking
 particles independently of one another. However, particles are never transferred
 from one process to another.
 
@@ -228,9 +229,10 @@ of the scoring function. Thus, a single event can increment more than just a
 single location in memory. As an example, a tally could specify that the
 reaction rate in each of 300 nuclides should be determined. In such a case, each
 scoring event would have to increment 300 tally bins. We see that the fact that
-we have $d$ bytes where $d \ge 8$ stems from the fact that a single scoring
-event may need to score to hundreds of scoring functions. The message sent to a
-server at a scoring event consists of the scores for each scoring function.
+we have $d$ bytes where $d \ge 8$ (the size of one double-precision float) stems
+from the fact that a single scoring event may need to score to hundreds of
+scoring functions. The message sent to a server at a scoring event consists of
+the scores for each scoring function.
 
 Each process that has been designated as a server does not track any particles
 but instead continuously receives data from the compute processes and increments
@@ -283,7 +285,7 @@ memory hierarchy, compiler optimizations, etc. While it is generally difficult
 to predict $\mu$ \emph{a priori}, it is straightforward to measure it with an
 actual simulation. Once $\mu$ is known, the expected time to complete a batch of
 $N$ particles is $N\mu$. Without tally servers, we can assume perfect parallel
-scaling within a single batch such that
+scaling within a single batch \cite{ane-romano-2012} such that
 
 \begin{equation}
   \label{eq:time-without}
@@ -540,11 +542,14 @@ a simulation of the Monte Carlo performance benchmark on the Cray XK6 as
 described before gives us a particle tracking rate of $1/\mu = 140$.
 
 Let us briefly discuss what values are appropriate to use for $f$, the number of
-events per particle. For the purpose of LWR core analysis, we are only
+events per particle. For the purpose of LWR core analysis, we are mostly
 interested in integrated fluxes and reaction rates in the fuel and thus can
 ignore all events in the cladding, water, and elsewhere. For the Monte Carlo
-performance benchmark, each particle has on average 5.7 collisions in fuel and
-21.3 total tracks in fuel. As a point of reference, each particle has about 26
+performance benchmark which has a fuel pin diameter of 0.82 cm, each particle
+has on average 5.7 collisions in fuel and 21.3 total tracks in fuel\footnote{If
+  a fuel pin is subdivided into multiple regions for performing depletion
+  analysis, the number of tracks would increase. We will assume no subdivision
+  in the present work.}. As a point of reference, each particle has about 26
 total collisions during its lifetime and makes 132 total tracks\footnote{These
   figures were obtained using no survival biasing techniques.}. Thus, the cases
 of most practical interest would be using a collision estimator to accumulate
@@ -576,8 +581,8 @@ Intrepid as well.
 
 \begin{table}[htb]
   \ttabbox[\FBwidth]{
-  \caption{Parameters used for tally server overhead model in
-    \eqref{eq:model-blocking}.}
+  \caption{Parameters used for tally server overhead models in
+    \eqref{eq:overhead-blocking} and \eqref{eq:overhead-nonblocking}.}
   \label{tab:parameters}
   }{
   \begin{tabular}{ c l c c }
@@ -698,11 +703,12 @@ use of the algorithm.
 The constraint in \eqref{eq:constraint-memory} can also tell us, given a total
 number of a tally servers, the range of total tally memory that can be
 reasonably accommodated. Let us suppose we wanted to perform a simulation using
-entire Mira Blue Gene/Q supercomputer at Argonne National Laboratory. This
-supercomputer has 48 racks each having 1024 nodes, each of which in turn has a
-16 core processor for a total of 786,432 cores. Each node has $M_n = 16 \cdot
-10^9$ bytes of memory. Assuming a support ratio of $c/s = 15$, we would need
-49,152 servers. Thus, \eqref{eq:constraint-memory} implies that
+all nodes on the Mira Blue Gene/Q supercomputer at Argonne National
+Laboratory. This supercomputer has 48 racks each having 1024 nodes, each of
+which in turn has a 16 core processor for a total of 786,432 cores. Each node
+has $M_n = 16 \cdot 10^9$ bytes of memory. Assuming a support ratio of $c/s =
+15$, we would need 49,152 servers. Thus, \eqref{eq:constraint-memory} implies
+that
 
 \begin{equation}
   \label{eq:constraint-mira}
