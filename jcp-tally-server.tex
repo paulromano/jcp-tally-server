@@ -105,12 +105,12 @@ necessarily go hand-in-hand with an implementation of Monte Carlo methods that
 will be able to fully utilize the resources. In fact, despite the many advances
 in Monte Carlo methods over the past few decades, an efficient parallel
 implementation for large-scale criticality calculations capable of scaling on
-modern petascale supercomputers has, until very recently \cite{ane-romano-2012},
+modern petascale supercomputers has, until very recently \cite{ane-romano-2013},
 not been demonstrated in the literature. There are a number of factors that
 hinder the parallel performance of these calculations \cite{jnet-martin-2012,
   pnst-brown-2011}. However, methods to overcome some of the traditional
 limitations in parallel implementations such as synchronization of the fission
-bank \cite{nse-romano-2012, ane-romano-2012} and tallies
+bank \cite{nse-romano-2012, ane-romano-2013} and tallies
 \cite{trans-romano-2012} have now been demonstrated.
 
 Currently, the major impediment to using Monte Carlo methods for reactor
@@ -285,7 +285,7 @@ memory hierarchy, compiler optimizations, etc. While it is generally difficult
 to predict $\mu$ \emph{a priori}, it is straightforward to measure it with an
 actual simulation. Once $\mu$ is known, the expected time to complete a batch of
 $N$ particles is $N\mu$. Without tally servers, we can assume perfect parallel
-scaling within a single batch \cite{ane-romano-2012} such that
+scaling within a single batch \cite{ane-romano-2013} such that
 
 \begin{equation}
   \label{eq:time-without}
@@ -512,7 +512,7 @@ systems of interest are two modern supercomputers: the Blue Gene/P supercomputer
 (Titan) at Oak Ridge National Laboratory (ORNL). For the purposes of estimating
 $d$ and $f$, we will look at solving for reaction rate distributions within fuel
 pins in the Monte Carlo performance benchmark \cite{mc11-hoogenboom} using the
-OpenMC Monte Carlo particle transport code \cite{ane-romano-2012}. The
+OpenMC Monte Carlo particle transport code \cite{ane-romano-2013}. The
 calculational rate will depend both on the computer architecture as well as the
 specific model chosen.
 
@@ -763,12 +763,12 @@ is accounted for explicitly by measuring $\mu$ over a range of $d$.
 \subsection{Description of algorithm}
 
 The algorithm described in \autoref{sec:algorithm} was implemented in OpenMC
-\cite{ane-romano-2012}, an open source Monte Carlo neutronic simulation software
+\cite{ane-romano-2013}, an open source Monte Carlo neutronic simulation software
 package recently developed at MIT capable of performing calculations on
 arbitrary 3D geometries with continuous-energy cross-sections. OpenMC was
 written with a focus on scalable algorithms for leadership-class supercomputers
 and has demonstrated weak scaling up to hundreds of thousands of processors on
-ALCF's Intrepid and OLCF's Jaguar supercomputers \cite{ane-romano-2012}. The
+ALCF's Intrepid and OLCF's Jaguar supercomputers \cite{ane-romano-2013}. The
 codebase is written in Fortran 2008 with parallelism provided via MPI and
 OpenMP.
 
