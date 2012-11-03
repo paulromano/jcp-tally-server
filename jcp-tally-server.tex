@@ -65,12 +65,12 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{abstract}
-An algorithm for decomposing large tally data in Monte Carlo particle
-simulations is developed, analyzed and implemented in a production Monte Carlo
-code, OpenMC. The algorithm is based on a non-overlapping decomposition of
-compute nodes into {\em tracking processors} and {\em tally servers}. The former
-are used simulate the movement of particles through the domain while the latter
-continuously receive and update tally data. A performance model for this
+An algorithm for decomposing large tally data in Monte Carlo particle transport
+simulations is developed, analyzed, and implemented in a continuous-energy Monte
+Carlo code, OpenMC. The algorithm is based on a non-overlapping decomposition of
+compute nodes into \emph{tracking processors} and \emph{tally servers}. The
+former are used simulate the movement of particles through the domain while the
+latter continuously receive and update tally data. A performance model for this
 approach is developed, showing that, for a range of parameters relevant to LWR
 analysis, the tally server algorithm should perform with minimal overhead on
 contemporary supercomputers. An implementation of the algorithm in OpenMC is
@@ -151,17 +151,17 @@ The work in \cite{jcp-siegel-2012-2} elucidates some important limitations of
 domain decomposition algorithms. One of the classical arguments against domain
 decomposition has been that a properly load-balanced simulation would be
 difficult to achieve for a problem with non-uniform particle densities (such as
-nuclear reactor). The original intent of \cite{jcp-siegel-2012-2} was to simply
-quantify the penalty from these non-uniform particle densities in a typical
-light-water reactor (LWR) simulation. However, in doing so, the theory revealed
-a related but perhaps more important limitation that has implications for
-simulation on large-scale supercomputers. Namely, as the number of processors
-increases, the subdomain size on each processor would become smaller and
-smaller. With an increasingly small domain size, the leakage rates between
-neighboring domains will approach unity, implying that communication costs would
-increase drastically. Indeed, this argument makes it hard to imagine domain
-decomposition being performed on thousands of processors without incurring a
-seriously penalty.
+a nuclear reactor). The original intent of \cite{jcp-siegel-2012-2} was to
+simply quantify the penalty from these non-uniform particle densities in a
+typical light-water reactor (LWR) simulation. However, in doing so, the theory
+revealed a related but perhaps more important limitation that has implications
+for simulation on large-scale supercomputers. Namely, variations in local
+leakage rates can lead to a load imbalance penalty far greater than that imposed
+only by non-uniform particle densities. Moreover, the magnitude of the load
+imbalance penalty arising from variable leakage rates is inversely proportional
+to the size of the subdomains. Thus, with an increasingly small domain size, the
+total simulation time, accounting for these load imbalances, could increase
+drastically.
 
 While a considerable amount of work and analysis has been carried out on domain
 decomposition, very little work has focused on data decomposition. The basic
@@ -227,10 +227,10 @@ currents, etc. If an event satisfies all filter criteria for a tally, a
 \emph{tally bin} for each scoring function would be incremented by an estimate
 of the scoring function. Thus, a single event can increment more than just a
 single location in memory. As an example, a tally could specify that the
-reaction rate in each of 300 nuclides should be determined. In such a case, each
-scoring event would have to increment 300 tally bins. We see that the fact that
-we have $d$ bytes where $d \ge 8$ (the size of one double-precision float) stems
-from the fact that a single scoring event may need to score to hundreds of
+reaction rate for each of 300 nuclides should be determined. In such a case,
+each scoring event would have to increment 300 tally bins. We see that the fact
+that we have $d$ bytes where $d \ge 8$ (the size of one double-precision float)
+stems from the fact that a single scoring event may need to score to hundreds of
 scoring functions. The message sent to a server at a scoring event consists of
 the scores for each scoring function.
 
@@ -546,19 +546,19 @@ events per particle. For the purpose of LWR core analysis, we are mostly
 interested in integrated fluxes and reaction rates in the fuel and thus can
 ignore all events in the cladding, water, and elsewhere. For the Monte Carlo
 performance benchmark which has a fuel pin diameter of 0.82 cm, each particle
-has on average 5.7 collisions in fuel and 21.3 total tracks in fuel\footnote{If
-  a fuel pin is subdivided into multiple regions for performing depletion
-  analysis, the number of tracks would increase. We will assume no subdivision
-  in the present work.}. As a point of reference, each particle has about 26
-total collisions during its lifetime and makes 132 total tracks\footnote{These
-  figures were obtained using no survival biasing techniques.}. Thus, the cases
-of most practical interest would be using a collision estimator to accumulate
-scores only in the fuel ($f = 5.7$) and using a track-length estimator to
-accumulate scores only in the fuel ($f = 21.3$). To obtain an upper bound on
-$d$, a good reference point is a depletion calculation where six reaction rates
-are needed for each of the 320 nuclides in the fuel. In this bounding case, a
-compute process would need to send $6 \cdot 320 \cdot 8 \; \text{bytes} = 15.36
-\; \text{kilobytes}$ at each event.
+has on average 5.7 collisions in fuel and 21.3 tracks in fuel\footnote{If a fuel
+  pin is subdivided into multiple regions for performing depletion analysis, the
+  number of tracks would increase. We will assume no subdivision in the present
+  work.}. As a point of reference, each particle has about 26 collisions and 132
+tracks during its lifetime\footnote{These figures were obtained using no
+  survival biasing techniques.}. Thus, the cases of most practical interest
+would be using a collision estimator to accumulate scores only in the fuel ($f =
+5.7$) and using a track-length estimator to accumulate scores only in the fuel
+($f = 21.3$). To obtain an upper bound on $d$, a good reference point is a
+depletion calculation where six reaction rates are needed for each of the 320
+nuclides in the fuel. In this bounding case, a compute process would need to
+send $6 \cdot 320 \cdot 8 \; \text{bytes} = 15.36 \; \text{kilobytes}$ at each
+event.
 
 To summarize the preceding considerations, \autoref{tab:parameters} shows the
 parameter space for both the Intrepid and Titan supercomputers. Using these
@@ -570,9 +570,7 @@ supercomputer. Based on our performance model, one can see that the
 communication will be latency-dominated for small $d$ and bandwidth-dominated
 for large $d$. Our upper bound of 15.36 kilobytes is clearly in the
 bandwidth-dominated region. \autoref{fig:model-titan} shows the estimated
-overhead as a function of $f$ and $d$ for the Titan supercomputer. While the
-Cray XK6 has very high bandwidth, the slower latency and faster processors makes
-the performance approximately equivalent to that of the Blue Gene/P. For $f =
+overhead as a function of $f$ and $d$ for the Titan supercomputer. For $f =
 21.3$ and $d = 15360$, the model predicts an overhead of 14.0 and 3.5 percent of
 the total running time for the Intrepid Blue Gene/P and Titan Cray XK6
 supercomputers, respectively, when using blocking communication. If non-blocking
@@ -1094,14 +1092,14 @@ out to study.
 \section{Conclusions}
 
 In the present work, an algorithm for decomposing large tally data in Monte
-Carlo particle simulations was proposed, analyzed, and implemented/tested in a
-production Monte Carlo code, OpenMC. The algorithm relies on disjoint sets of
-compute processes and servers of which the former simulate particles moving
-through the geometry and the latter runs in a continuous loop receiving scores
-from the compute processors and incrementing tallies. This algorithm potentially
-allows the end user to dramatically increase the overall tally memory footprint
-and therefore enables the potential to carry out full core fuel depletion
-calculations.
+Carlo particle transport simulations was proposed, analyzed, and
+implemented/tested in a continuous-energy Monte Carlo code, OpenMC. The
+algorithm relies on disjoint sets of compute processes and servers of which the
+former simulate particles moving through the geometry and the latter runs in a
+continuous loop receiving scores from the compute processors and incrementing
+tallies. This algorithm potentially allows the end user to dramatically increase
+the overall tally memory footprint and therefore enables the potential to carry
+out full core fuel depletion calculations.
 
 The proposed algorithm is only of practical value if the communication penalty
 resulting from tally decomposition is reasonable relative to the key timescales
