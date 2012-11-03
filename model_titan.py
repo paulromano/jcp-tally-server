@@ -12,9 +12,9 @@ matplotlib.rcParams['text.latex.preamble'] = '\usepackage[bitstream-charter]{mat
 matplotlib.rc('font',**{'family':'serif','serif':['Computer Modern']})
 
 # Parameters for Computer
-mu    = 1./140.  # Particles per second on Titan Cray XK6
-alpha = 2.0e-6   # Average ping-pong latency on Titan Cray XK6
-beta  = 2.5e-10  # Bandwidth on Titan Cray CK6
+mu    = 1./140.  # Particles per second on Titan Cray XK7
+alpha = 2.0e-6   # Average ping-pong latency on Titan Cray XK7
+beta  = 2.5e-10  # Bandwidth on Titan Cray XK7
 
 # Parameters from OpenMC simulation
 dmax = 15360

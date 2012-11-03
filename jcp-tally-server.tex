@@ -508,7 +508,7 @@ develop realistic estimates for the speed of the network interconnect ($\alpha$
 and $\beta$), the calculational rate ($\mu$), and the amount and frequency of
 data being tallied ($d$ and $f$). For the network latency and bandwidth, our
 systems of interest are two modern supercomputers: the Blue Gene/P supercomputer
-(Intrepid) at Argonne National Laboratory (ANL) and the Cray XK6 supercomputer
+(Intrepid) at Argonne National Laboratory (ANL) and the Cray XK7 supercomputer
 (Titan) at Oak Ridge National Laboratory (ORNL). For the purposes of estimating
 $d$ and $f$, we will look at solving for reaction rate distributions within fuel
 pins in the Monte Carlo performance benchmark \cite{mc11-hoogenboom} using the
@@ -529,17 +529,18 @@ processor, i.e. $\mu = 0.0132 \unit{s/particle}$. We have chosen to use 320
 nuclides in the fuel as this is the maximum number of nuclides available in the
 ENDF/B-VII.0 cross section library used in the simulation.
 
-The Titan supercomputer has 18,688 Cray XK6 compute nodes, each of which has a
-16-core AMD Opteron 6274 processor with 32 GB of memory. The Cray XK6 uses the
-Cray Gemini interconnect which has lower latency and higher bandwidth than the
-interconnect on the Blue Gene/P. Unfortunately, reliable performance
-measurements for the Cray Gemini interconnect are hard to come by. Preliminary
-measurements indicate an MPI latency of about 1.5 microseconds and a peak user
-data injection bandwidth of about 6 GB/s \cite{hlrs-workshop-2011}. We will
-conservatively estimate the latency as $\alpha = 2.0 \cdot 10^{-6} \unit{s}$ and
-the inverse bandwidth as $\beta = 2.5 \cdot 10^{-10} \unit{s/byte}$. Performing
-a simulation of the Monte Carlo performance benchmark on the Cray XK6 as
-described before gives us a particle tracking rate of $1/\mu = 140$.
+The Titan supercomputer has 18,688 Cray XK7 compute nodes, each of which has a
+16-core AMD Opteron 6274 processor with 32 GB of memory and a nVidia Tesla K20
+GPU. The Cray XK7 uses the Cray Gemini interconnect which has lower latency and
+higher bandwidth than the interconnect on the Blue Gene/P. Unfortunately,
+reliable performance measurements for the Cray Gemini interconnect are hard to
+come by. Preliminary measurements indicate an MPI latency of about 1.5
+microseconds and a peak user data injection bandwidth of about 6 GB/s
+\cite{hlrs-workshop-2011}. We will conservatively estimate the latency as
+$\alpha = 2.0 \cdot 10^{-6} \unit{s}$ and the inverse bandwidth as $\beta = 2.5
+\cdot 10^{-10} \unit{s/byte}$. Performing a simulation of the Monte Carlo
+performance benchmark on the Cray XK7 as described before gives us a particle
+tracking rate of $1/\mu = 140$.
 
 Let us briefly discuss what values are appropriate to use for $f$, the number of
 events per particle. For the purpose of LWR core analysis, we are mostly
@@ -572,7 +573,7 @@ for large $d$. Our upper bound of 15.36 kilobytes is clearly in the
 bandwidth-dominated region. \autoref{fig:model-titan} shows the estimated
 overhead as a function of $f$ and $d$ for the Titan supercomputer. For $f =
 21.3$ and $d = 15360$, the model predicts an overhead of 14.0 and 3.5 percent of
-the total running time for the Intrepid Blue Gene/P and Titan Cray XK6
+the total running time for the Intrepid Blue Gene/P and Titan Cray XK7
 supercomputers, respectively, when using blocking communication. If non-blocking
 communication is used, the overhead is expected to be less than 10 percent on
 Intrepid as well.
@@ -609,7 +610,7 @@ Intrepid as well.
 \begin{figure}[htb]
   \centering
   \includegraphics[width=4in]{model_titan}
-  \caption{Estimated tally server overhead for Titan Cray XK6 supercomputer
+  \caption{Estimated tally server overhead for Titan Cray XK7 supercomputer
     based on \eqref{eq:overhead-blocking} and \eqref{eq:overhead-nonblocking}.}
   \label{fig:model-titan}
 \end{figure}
@@ -1041,12 +1042,12 @@ for $c/s = 1$, $c/s = 3$, $c/s = 7$, and $c/s = 15$ is shown in
   \makebox[\textwidth][c]{
   \begin{floatrow}[2]
     \ffigbox[\FBwidth] {
-          \caption{Tally server overhead on Titan Cray XK6 as a function
+          \caption{Tally server overhead on Titan Cray XK7 as a function
             of data per event with $c/s = 1$.}
           \label{fig:titan-r1}
         } {\includegraphics[width=3.4in]{results_titan_r1}}
     \ffigbox[\FBwidth] {
-          \caption{Tally server overhead on Titan Cray XK6 as a function
+          \caption{Tally server overhead on Titan Cray XK7 as a function
             of data per event with $c/s = 3$.}
           \label{fig:titan-r3}
         } {\includegraphics[width=3.4in]{results_titan_r3}}
@@ -1054,12 +1055,12 @@ for $c/s = 1$, $c/s = 3$, $c/s = 7$, and $c/s = 15$ is shown in
   }
   \begin{floatrow}
     \ffigbox[\FBwidth] {
-          \caption{Tally server overhead on Titan Cray XK6 as a function
+          \caption{Tally server overhead on Titan Cray XK7 as a function
             of data per event with $c/s = 7$.}
           \label{fig:titan-r7}
         } {\includegraphics[width=3.4in]{results_titan_r7}}
     \ffigbox[\FBwidth] {
-          \caption{Tally server overhead on Titan Cray XK6 as a function
+          \caption{Tally server overhead on Titan Cray XK7 as a function
             of data per event with $c/s = 15$.}
           \label{fig:titan-r15}
         } {\includegraphics[width=3.4in]{results_titan_r15}}
@@ -1083,7 +1084,7 @@ out to study.
 \begin{figure}[!tbh]
   \centering
   \includegraphics[width=4in]{results_titan_cs}
-  \caption{Tally server overhead on Titan Cray XK6 as a function of $p$ for $d =
+  \caption{Tally server overhead on Titan Cray XK7 as a function of $p$ for $d =
     15360$.}
   \label{fig:titan-cs}
 \end{figure}
