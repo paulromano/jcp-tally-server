@@ -115,14 +115,14 @@ bank \cite{nse-romano-2012, ane-romano-2013} and tallies
 
 Currently, the major impediment to using Monte Carlo methods for reactor
 analysis is the fact that the parallel algorithms still generally rely on each
-program instance storing the full geometry, interaction cross section, and tally
-data in memory. There is of course good reason to use full memory replication
---- each process can simulate particles independently\footnote{This is strictly
-  only true in a fixed source calculation. In an eigenvalue calculation, there
-  is a dependency between fission source iterations.} of one another and the
-tally results can be collected at the end of the simulations. For reactor
-analysis, however, the size of the cross section and tally data can easily
-exceed the memory available on a single node. Siegel et
+program instance storing the full geometry, interaction cross sections, and
+tally data in memory. There is of course good reason to use full memory
+replication --- each process can simulate particles independently\footnote{This
+  is strictly only true in a fixed source calculation. In an eigenvalue
+  calculation, there is a dependency between fission source iterations.} of one
+another and the tally results can be collected at the end of the
+simulations. For reactor analysis, however, the size of the cross section and
+tally data can easily exceed the memory available on a single node. Siegel et
 al. \cite{jcp-siegel-2012-2} estimate that cross section data could
 hypothetically exceed 100 GB and tally data could exceed 0.5 TB.
 
@@ -228,11 +228,11 @@ currents, etc. If an event satisfies all filter criteria for a tally, a
 of the scoring function. Thus, a single event can increment more than just a
 single location in memory. As an example, a tally could specify that the
 reaction rate for each of 300 nuclides should be determined. In such a case,
-each scoring event would have to increment 300 tally bins. We see that the fact
-that we have $d$ bytes where $d \ge 8$ (the size of one double-precision float)
-stems from the fact that a single scoring event may need to score to hundreds of
-scoring functions. The message sent to a server at a scoring event consists of
-the scores for each scoring function.
+each scoring event would have to increment 300 tally bins. We see that we will
+have $d$ bytes where $d \ge 8$ (the size of one double-precision float) since a
+single scoring event may need to score to hundreds of scoring functions. The
+message sent to a server at a scoring event consists of the scores for each
+scoring function.
 
 Each process that has been designated as a server does not track any particles
 but instead continuously receives data from the compute processes and increments
