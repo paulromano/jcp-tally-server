@@ -540,7 +540,7 @@ microseconds and a peak user data injection bandwidth of about 6 GB/s
 $\alpha = 2.0 \cdot 10^{-6} \unit{s}$ and the inverse bandwidth as $\beta = 2.5
 \cdot 10^{-10} \unit{s/byte}$. Performing a simulation of the Monte Carlo
 performance benchmark on the Cray XK7 as described before gives us a particle
-tracking rate of $1/\mu = 140$.
+tracking rate of $1/\mu = 140 \unit{particle/s}$.
 
 Let us briefly discuss what values are appropriate to use for $f$, the number of
 events per particle. For the purpose of LWR core analysis, we are mostly
@@ -588,8 +588,8 @@ Intrepid as well.
     \toprule
     Parameter & Description & Intrepid & Titan \\
     \midrule
-    $\alpha$ & Network Latency (s) & $3.53 \cdot 10^{-6}$ & $1.5 \cdot 10^{-6}$ \\
-    $\beta$ & Network Bandwidth (s/byte) & $2.60 \cdot 10^{-9}$ & $1.0 \cdot 10^{-9}$ \\
+    $\alpha$ & Network Latency (s) & $3.53 \cdot 10^{-6}$ & $2.0 \cdot 10^{-6}$ \\
+    $\beta$ & Network Bandwidth (s/byte) & $2.60 \cdot 10^{-9}$ & $2.5 \cdot 10^{-10}$ \\
     $1/\mu$ & Particles/second & 76 & 140 \\
     $d$ & Data/event (bytes) & 0 -- 15,360 & 0 -- 15,360 \\
     $f$ & Events/particle & 0 -- 132 & 0 -- 132 \\
@@ -1164,7 +1164,7 @@ out that the tally server algorithm does not make sense.
 \section*{Acknowledgments}
 
 This research was performed under appointment of the first author to the
-Rickover Fellowship Program in Nuclear Engineering sponsored by Naval Reactor
+Rickover Fellowship Program in Nuclear Engineering sponsored by Naval Reactors
 Division of the U.S. Department of Energy. This work was also supported in part
 by the Office of Advanced Scientific Computing Research, Office of Science, US
 Department of Energy, under Contract DE-AC02-06CH11357 and by the Consortium for
