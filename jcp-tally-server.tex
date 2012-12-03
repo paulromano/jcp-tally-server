@@ -1,8 +1,7 @@
-\documentclass[3p,fleqn]{elsarticle}
+\documentclass[times,fleqn]{elsarticle}
 
 \journal{J. Comput. Phys.}
 
-\usepackage[bitstream-charter]{mathdesign} % Use BT Charter font
 \usepackage[T1]{fontenc}                   % Use T1 encoding instead of OT1
 \usepackage[utf8]{inputenc}                % Use UTF8 input encoding
 \usepackage{microtype}                     % Improve typography
@@ -600,7 +599,7 @@ Intrepid as well.
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=4in]{model_intrepid}
+  \includegraphics[width=4in]{model_intrepid.pdf}
   \caption{Estimated tally server overhead for Intrepid Blue Gene/P
     supercomputer based on \eqref{eq:overhead-blocking} and
     \eqref{eq:overhead-nonblocking}.}
@@ -609,7 +608,7 @@ Intrepid as well.
 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=4in]{model_titan}
+  \includegraphics[width=4in]{model_titan.pdf}
   \caption{Estimated tally server overhead for Titan Cray XK7 supercomputer
     based on \eqref{eq:overhead-blocking} and \eqref{eq:overhead-nonblocking}.}
   \label{fig:model-titan}
@@ -954,9 +953,9 @@ doubling the number of nuclides up to 320. Thus, the amount of data sent at each
 event varied from 240 bytes up to 15.36 kilobytes. \autoref{fig:mu-d} shows the
 observed dependence of $\mu$ on $d$ normalized to the $d=5$ case.
 
-\begin{figure}
+\begin{figure}[htb]
   \centering
-  \includegraphics[width=4.0in]{results_baseline}
+  \includegraphics[width=4.0in]{results_baseline.pdf}
   \caption{Observed dependence of $\mu$ on the amount of data tallied, $d$, on
     Intrepid and Titan.}
   \label{fig:mu-d}
@@ -964,7 +963,7 @@ observed dependence of $\mu$ on $d$ normalized to the $d=5$ case.
 
 The parameter study using tally servers on the Intrepid supercomputer consisted
 of 168 simulations with each combination of the following parameters: $p =
-16,32,64,128,256,512$, $c/s = 1,3,7,15$, and $d = 240, 480, 960, \allowbreak
+16,32,64,128,\allowbreak 256,512$, $c/s = 1,3,7,15$, and $d = 240, 480, 960,
 1920, 3840, 7680, 15360$. Like the baseline cases, the runs with tally servers
 had 10 inactive batches, 10 active batches, and $N/p = 500$. The effective
 overhead from tally servers was determined in the following manner. First, the
@@ -980,34 +979,34 @@ in. The overhead calculated in this manner for $c/s = 1$, $c/s = 3$, $c/s = 7$,
 and $c/s = 15$ is shown in \autoref{fig:intrepid-r1}, \autoref{fig:intrepid-r3},
 \autoref{fig:intrepid-r7}, and \autoref{fig:intrepid-r15}, respectively.
 
-\begin{figure*}[!th]
-  \makebox[\textwidth][c]{
-  \begin{floatrow}[2]
-    \ffigbox[\FBwidth] {
-          \caption{Tally server overhead on Intrepid Blue Gene/P as a function
-            of data per event with $c/s = 1$.}
-          \label{fig:intrepid-r1}
-        } {\includegraphics[width=3.4in]{results_intrepid_r1}}
-    \ffigbox[\FBwidth] {
-          \caption{Tally server overhead on Intrepid Blue Gene/P as a function
-            of data per event with $c/s = 3$.}
-          \label{fig:intrepid-r3}
-        } {\includegraphics[width=3.4in]{results_intrepid_r3}}
-  \end{floatrow}
-  }
-  \begin{floatrow}
-    \ffigbox[\FBwidth] {
-          \caption{Tally server overhead on Intrepid Blue Gene/P as a function
-            of data per event with $c/s = 7$.}
-          \label{fig:intrepid-r7}
-        } {\includegraphics[width=3.4in]{results_intrepid_r7}}
-    \ffigbox[\FBwidth] {
-          \caption{Tally server overhead on Intrepid Blue Gene/P as a function
-            of data per event with $c/s = 15$.}
-          \label{fig:intrepid-r15}
-        } {\includegraphics[width=3.4in]{results_intrepid_r15}}
-  \end{floatrow}
-\end{figure*}
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=3.4in]{results_intrepid_r1.pdf}
+  \caption{Tally server overhead on Intrepid Blue Gene/P as a function
+    of data per event with $c/s = 1$.}
+  \label{fig:intrepid-r1}
+\end{figure}
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=3.4in]{results_intrepid_r3.pdf}
+  \caption{Tally server overhead on Intrepid Blue Gene/P as a function
+    of data per event with $c/s = 3$.}
+  \label{fig:intrepid-r3}
+\end{figure}
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=3.4in]{results_intrepid_r7.pdf}
+  \caption{Tally server overhead on Intrepid Blue Gene/P as a function
+    of data per event with $c/s = 7$.}
+  \label{fig:intrepid-r7}
+\end{figure}
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=3.4in]{results_intrepid_r15.pdf}
+  \caption{Tally server overhead on Intrepid Blue Gene/P as a function
+    of data per event with $c/s = 15$.}
+  \label{fig:intrepid-r15}
+\end{figure}
 
 It is also of interest to observe the behavior of the tally server overhead with
 increasing numbers of total processors. Recall that the performance model
@@ -1020,9 +1019,9 @@ sufficient for all servers to keep up with the volume of messages. Since the
 model assumptions regarding achievable bandwidth do not account for contention,
 such deviation from the model is not unexpected.
 
-\begin{figure}[!tbh]
+\begin{figure}[htb]
   \centering
-  \includegraphics[width=4in]{results_intrepid_cs}
+  \includegraphics[width=4in]{results_intrepid_cs.pdf}
   \caption{Tally server overhead on Intrepid Blue Gene/P as a function of $p$
     for $d = 15360$.}
   \label{fig:intrepid-cs}
@@ -1031,41 +1030,41 @@ such deviation from the model is not unexpected.
 Another parameter study using tally servers on the Titan supercomputer consisted
 of 196 simulations with each combination of the following parameters: $p =
 16,32,64,128,256,512,1024$, $c/s = 1,3,7,15$, and $d = 240, 480, 960, 1920,
-3840, 7680, 15360$. Again, the runs with tally servers had 10 inactive batches,
-10 active batches, and $N/p = 1000$. The effective overhead from tally servers
-was determined as described for the study on Intrepid. The calculated overhead
-for $c/s = 1$, $c/s = 3$, $c/s = 7$, and $c/s = 15$ is shown in
-\autoref{fig:titan-r1}, \autoref{fig:titan-r3}, \autoref{fig:titan-r7}, and
+3840, 7680, \allowbreak 15360$. Again, the runs with tally servers had 10
+inactive batches, 10 active batches, and $N/p = 1000$. The effective overhead
+from tally servers was determined as described for the study on Intrepid. The
+calculated overhead for $c/s = 1$, $c/s = 3$, $c/s = 7$, and $c/s = 15$ is shown
+in \autoref{fig:titan-r1}, \autoref{fig:titan-r3}, \autoref{fig:titan-r7}, and
 \autoref{fig:titan-r15}, respectively.
 
-\begin{figure*}[!tbh]
-  \makebox[\textwidth][c]{
-  \begin{floatrow}[2]
-    \ffigbox[\FBwidth] {
-          \caption{Tally server overhead on Titan Cray XK7 as a function
-            of data per event with $c/s = 1$.}
-          \label{fig:titan-r1}
-        } {\includegraphics[width=3.4in]{results_titan_r1}}
-    \ffigbox[\FBwidth] {
-          \caption{Tally server overhead on Titan Cray XK7 as a function
-            of data per event with $c/s = 3$.}
-          \label{fig:titan-r3}
-        } {\includegraphics[width=3.4in]{results_titan_r3}}
-  \end{floatrow}
-  }
-  \begin{floatrow}
-    \ffigbox[\FBwidth] {
-          \caption{Tally server overhead on Titan Cray XK7 as a function
-            of data per event with $c/s = 7$.}
-          \label{fig:titan-r7}
-        } {\includegraphics[width=3.4in]{results_titan_r7}}
-    \ffigbox[\FBwidth] {
-          \caption{Tally server overhead on Titan Cray XK7 as a function
-            of data per event with $c/s = 15$.}
-          \label{fig:titan-r15}
-        } {\includegraphics[width=3.4in]{results_titan_r15}}
-  \end{floatrow}
-\end{figure*}
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=3.4in]{results_titan_r1.pdf}
+  \caption{Tally server overhead on Titan Cray XK7 as a function
+    of data per event with $c/s = 1$.}
+  \label{fig:titan-r1}
+\end{figure}
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=3.4in]{results_titan_r3.pdf}
+  \caption{Tally server overhead on Titan Cray XK7 as a function
+    of data per event with $c/s = 3$.}
+  \label{fig:titan-r3}
+\end{figure}
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=3.4in]{results_titan_r7.pdf}
+  \caption{Tally server overhead on Titan Cray XK7 as a function
+    of data per event with $c/s = 7$.}
+  \label{fig:titan-r7}
+\end{figure}
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=3.4in]{results_titan_r15.pdf}
+  \caption{Tally server overhead on Titan Cray XK7 as a function
+    of data per event with $c/s = 15$.}
+  \label{fig:titan-r15}
+\end{figure}
 
 Similar to \autoref{fig:intrepid-cs}, we can look at the behavior of the tally
 server overhead on Titan with increasing $p$. \autoref{fig:titan-cs} shows the
@@ -1081,9 +1080,9 @@ sophisticated model for network contention. These studies are beyond the scope
 of the present work and are not central to addressing the key questions we set
 out to study.
 
-\begin{figure}[!tbh]
+\begin{figure}[htb]
   \centering
-  \includegraphics[width=4in]{results_titan_cs}
+  \includegraphics[width=4in]{results_titan_cs.pdf}
   \caption{Tally server overhead on Titan Cray XK7 as a function of $p$ for $d =
     15360$.}
   \label{fig:titan-cs}

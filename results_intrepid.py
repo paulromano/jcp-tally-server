@@ -9,7 +9,7 @@ import numpy as np
 matplotlib.rcParams['ps.useafm'] = True
 matplotlib.rcParams['pdf.use14corefonts'] = True
 matplotlib.rcParams['text.usetex'] = True
-matplotlib.rcParams['text.latex.preamble'] = '\usepackage[bitstream-charter]{mathdesign}'
+matplotlib.rcParams['text.latex.preamble'] = '\usepackage{txfonts}'
 matplotlib.rc('font',**{'family':'serif','serif':['Computer Modern']})
 
 procs = [16, 32, 64, 128, 256, 512]
