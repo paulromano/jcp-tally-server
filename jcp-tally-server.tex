@@ -1081,6 +1081,18 @@ sophisticated model for network contention. These studies are beyond the scope
 of the present work and are not central to addressing the key questions we set
 out to study.
 
+Given the small increase in overhead with increasing numbers of processes
+observed in \autoref{fig:intrepid-cs} and \autoref{fig:titan-cs}, we expect that
+simulations utilizing tally servers on hundreds of thousands of processes or
+more should be possible. However, problems can and do happen when attempting to
+extend a communication-intensive algorithm to such large numbers of processes;
+as one example, many MPI implementations are not able to handle more than tens
+of millions of messages per second. Depending on the nature of the simulation,
+it is possible that such limits could be exceeded or that other problems
+relating to network contention could be experienced. Thus, future tests of the
+tally server algorithm on $10^5$ processes or more are warranted to assess its
+feasibility for large-scale simulations.
+
 \begin{figure}[!tbh]
   \centering
   \includegraphics[width=4in]{results_titan_cs}
@@ -1157,8 +1169,11 @@ efficiently combine a tally server model with on-node shared-memory parallelism.
 
 As a final comment, one should recognize the fact that the algorithm presented
 here has primarily been presented with a focus and intent on applications in LWR
-analysis. For other types of analysis performed with Monte Carlo, it may turn
-out that the tally server algorithm does not make sense.
+analysis. For other types of analysis performed with Monte Carlo, even those
+with similarly large memory requirements such as radiography image generation,
+it may turn out that the tally server algorithm does not make sense. Separate
+analyses would need to be made to evaluate the suitability of a tally server
+algorithm for data decomposition as applied to other disciplines.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Acknowledgments}
