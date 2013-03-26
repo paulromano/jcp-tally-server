@@ -113,6 +113,55 @@ limitations in parallel implementations such as synchronization of the fission
 bank \cite{nse-romano-2012, ane-romano-2013} and tallies
 \cite{trans-romano-2012} have now been demonstrated.
 
+\subsection{$k$-Eigenvalue Calculations}
+
+To understand the limitations of current parallel methods for Monte Carlo
+calculations, it is instructive to first outline the basic algorithm used in
+$k$-eigenvalue calculations. With few exceptions, Monte Carlo reactor
+calculations are performed only for steady-state configurations. Any
+time-dependent behavior is obviated by introducing a scaling factor, $k$, on the
+fission term in the transport equation to force balance. The problem thus
+becomes an eigenvalue problem where $k$ is the eigenvalue and the distribution
+of fission source sites is the eigenvector.
+
+Ignoring the details of the complex treatment of the physics and geometry in a
+system, the Monte Carlo algorithm to solve the $k$-eigenvalue problem is in
+principle quite simple. An iterative process is performed whereby a
+\textit{generation} of $N$ neutrons are simulated from birth to death. Each of
+the $N$ neutrons is born from fission and will move through the system
+undergoing collisions until it is absorbed by a target nucleus or leaks out of
+the system completely. Some fraction of the $N$ neutrons will have ended their
+life by causing fission; rather than tracking the resulting fission neutrons,
+they are stored in a \textit{bank} which is used as the source for the
+subsequent generation. The distribution of fission source sites is not known
+\textit{a priori} so a guess must be assumed at the beginning of the simulation.
+
+We must also have an appreciation for what data need be stored in memory during
+a simulation. There are three general categories of data:
+\begin{enumerate}
+  \item \textit{Geometry} --- In most Monte Carlo codes, the basic geometry
+    primitives are represented using \textit{constructive solid geometry},
+    whereby regions of volume are defined as the intersection, union, or
+    difference of curved surfaces that bound them. By taking advantage of
+    repeating structures, it is possible to fully describe the geometry with a
+    very modest amount of memory. One important point to recognize is that Monte
+    Carlo particle transport simulations do not require a mesh-based geometry.
+  \item \textit{Interaction cross sections} --- The random walk of each particle
+    will be governed by various probability distributions, which in turn are
+    determined by evaluated nuclear data. The cross sections are a function of
+    energy and temperature, which make their evaluation in non-isothermal
+    problems considerably most difficult. The memory required to store these
+    cross sections will be directly related to the number of nuclides present in
+    the system as well as the number of temperatures that the data needs to be
+    stored at.
+  \item \textit{Tallies} --- Tallies are the results of the simulations and are
+    generally user-defined physical quantities, such as reaction rates and
+    neutron fluxes. In most Monte Carlo codes, the user can specify a region of
+    volume over which the results should be integrated. Again, the memory
+    requirements will be directly proportional to the number of quantities that
+    are desired.
+\end{enumerate}
+
 Currently, the major impediment to using Monte Carlo methods for reactor
 analysis is the fact that the parallel algorithms still generally rely on each
 program instance storing the full geometry, interaction cross sections, and
@@ -125,6 +174,8 @@ simulations. For reactor analysis, however, the size of the cross section and
 tally data can easily exceed the memory available on a single node. Siegel et
 al. \cite{jcp-siegel-2012-2} estimate that cross section data could
 hypothetically exceed 100 GB and tally data could exceed 0.5 TB.
+
+\subsection{Decomposition Algorithms}
 
 In order to treat realistic reactor problems, an algorithm that is capable of
 dealing with limited per-node memory must be employed. Two general strategies
