@@ -774,6 +774,24 @@ processors. However, doing so would not change the overall conclusion that under
 normal circumstances, the memory requirements are not a formidable challenge to
 successfully employing the tally server algorithm.
 
+\subsection{Influence of Variance Reduction Schemes}
+
+Our foregoing estimates of $f$ were based on direct measurements from the OpenMC
+code where no variance reduction schemes, such as survival biasing, were
+used. In a calculation with survival biasing, particles which might have
+otherwise have been absorbed would continue on their random walk resulting in
+more collisions. Thus, the measured $f$ would certainly be higher if survival
+biasing is used. For the Monte Carlo performance benchmark, we find that using
+survival biasing with a cutoff weight of 0.25 increases the number of tracks per
+particle from 21.3 to 24.1 --- an increase in $f$ of about 13\%. At the same
+time however, the time to simulate a single particle will increase
+proportionally with the total number of collisions it experiences. Using
+survival biasing with a cutoff weight of the 0.25, the average time to simulate
+a particle, $\mu$, increases by about 14\% over a simulation with no survival
+biasing. Therefore, we expect there to be little net effect of the use of
+survival biasing on the tally server overhead. Similar calculations made with a
+lower cutoff weight also lead us to the same conclusion.
+
 \subsection{Dependence of \texorpdfstring{$\mu$ on $d$}{u on d}}
 
 To this point, we have assumed that $\mu$ is independent of all other parameters
