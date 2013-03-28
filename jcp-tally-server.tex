@@ -1229,14 +1229,18 @@ decrease the communication overhead.
 
 On the hardware end, improvements in supercomputer architectures may continue to
 reduce network latency and improve bandwidth, at least in the short-term. Again,
-this will largely benefit the tally server algorithm. Since incrementing tallies
-can naturally be expressed as a fetch-and-add atomic operation, there is also
-potential to exploit remote direct memory access (RDMA) operations either
-explicitly (e.g., using MPI-2) or implicitly through a partitioned global
-address space (e.g., Fortran co-arrays). Modern network interconnects should be
-able to take advantage of RDMA operations. In addition, the requirement that
-servers and compute processes be disjoint could be obviated by the use of RDMA,
-potentially offering further reductions in overhead.
+this will largely benefit the tally server algorithm. While improvements in
+single process calculation rates could decrease $\mu$ and increase the
+communication overhead, the fact that processor clock rates have stagnated leads
+us to believe that any single process performance gains will likely be modest.
+
+Since incrementing tallies can naturally be expressed as a fetch-and-add atomic
+operation, there is also potential to exploit remote direct memory access (RDMA)
+operations either explicitly (e.g., using MPI-2) or implicitly through a
+partitioned global address space (e.g., Fortran co-arrays). Modern network
+interconnects should be able to take advantage of RDMA operations. In addition,
+the requirement that servers and compute processes be disjoint could be obviated
+by the use of RDMA, potentially offering further reductions in overhead.
 
 One potential downside to the algorithm presented here is that it considerably
 complicates the use of threading via OpenMP. The most natural means of obtaining
