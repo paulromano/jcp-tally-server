@@ -1203,17 +1203,29 @@ One point that was made earlier was that the algorithm presented here does not
 reduce the burden of large cross section data. For realistic reactor analysis,
 cross section data may well reach into the hundreds of gigabytes owing to the
 fact that cross section libraries would be needed at a multitude of
-temperatures. That being said, there is a considerable amount of research and
-development in the area of on-the-fly evaluation of effective cross sections at
-any temperature. We mention in passing two promising efforts to that end --- the
-work of Yesilyurt on on-the-fly Doppler broadening \cite{nse-yesilyurt-2012} and
-the work of Viitanen on explicit temperature treatment
-\cite{nse-viitanen-2012}. The latter development would enable simulation using 0
-K cross sections but with a significant performance penalty. In general, this
-and other improvements in physics methods will likely lead to slower simulations
-but with higher fidelity. From the perspective of the tally server model, these
-developments will increase $\mu$ and consequently decrease the communication
-overhead.
+temperatures. A natural question then is whether a data decomposition algorithm
+based on servers could also ameliorate the per-process memory footprint for
+cross sections. Such an algorithm would unfortunately be considerably more
+complicated than the one we have presented here. For example, since the cross
+section data needed at each interaction are not contiguous in memory, the server
+process would first have to assemble the data into an array to send to the
+compute process. Along with the integrated cross sections, the compute process
+would also need secondary angle and energy distributions, which in general are
+of variable length in memory, for each possible reaction the particle might
+undergo since the exact reaction to be sampled is not known at the time the
+cross sections are evaluated. Due to these complexities and given that other
+promising research efforts may significantly reduce cross section memory
+requirements, an algorithm to decompose cross section data was not considered as
+part of the present work. Two current efforts towards on-the-fly evaluation of
+effective cross sections at any temperature are worth mentioning as possible
+solutions to this problem --- the work of Yesilyurt on on-the-fly Doppler
+broadening \cite{nse-yesilyurt-2012} and the work of Viitanen on explicit
+temperature treatment \cite{nse-viitanen-2012}. The latter development would
+enable simulation using 0 K cross sections but with a significant performance
+penalty. In general, this and other improvements in physics methods will likely
+lead to slower simulations but with higher fidelity. From the perspective of the
+tally server model, these developments will increase $\mu$ and consequently
+decrease the communication overhead.
 
 On the hardware end, improvements in supercomputer architectures may continue to
 reduce network latency and improve bandwidth, at least in the short-term. Again,
