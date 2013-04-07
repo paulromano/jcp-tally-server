@@ -70,8 +70,8 @@ Carlo code, OpenMC. The algorithm is based on a non-overlapping decomposition of
 compute nodes into \emph{tracking processors} and \emph{tally servers}. The
 former are used simulate the movement of particles through the domain while the
 latter continuously receive and update tally data. A performance model for this
-approach is developed, showing that, for a range of parameters relevant to LWR
-analysis, the tally server algorithm should perform with minimal overhead on
+approach is developed, suggesting that, for a range of parameters relevant to
+LWR analysis, the tally server algorithm should perform with minimal overhead on
 contemporary supercomputers. An implementation of the algorithm in OpenMC is
 then tested on the Intrepid and Titan supercomputers, supporting the key
 predictions of the model over a wide range of parameters. We thus conclude that
@@ -112,6 +112,55 @@ limitations in parallel implementations such as synchronization of the fission
 bank \cite{nse-romano-2012, ane-romano-2013} and tallies
 \cite{trans-romano-2012} have now been demonstrated.
 
+\subsection{$k$-Eigenvalue Calculations}
+
+To understand the limitations of current parallel methods for Monte Carlo
+calculations, it is instructive to first outline the basic algorithm used in
+$k$-eigenvalue calculations. With few exceptions, Monte Carlo reactor
+calculations are performed only for steady-state configurations. Any
+time-dependent behavior is obviated by introducing a scaling factor, $k$, on the
+fission term in the transport equation to force balance. The problem thus
+becomes an eigenvalue problem where $k$ is the eigenvalue and the distribution
+of fission source sites is the eigenvector.
+
+Ignoring the details of the complex treatment of the physics and geometry in a
+system, the Monte Carlo algorithm to solve the $k$-eigenvalue problem is in
+principle quite simple. An iterative process is performed whereby a
+\textit{generation} of $N$ neutrons are simulated from birth to death. Each of
+the $N$ neutrons is born from fission and will move through the system
+undergoing collisions until it is absorbed by a target nucleus or leaks out of
+the system completely. Some fraction of the $N$ neutrons will have ended their
+life by causing fission; rather than tracking the resulting fission neutrons,
+they are stored in a \textit{bank} which is used as the source for the
+subsequent generation. The distribution of fission source sites is not known
+\textit{a priori} so a guess must be assumed at the beginning of the simulation.
+
+We must also have an appreciation for what data need be stored in memory during
+a simulation. There are three general categories of data:
+\begin{enumerate}
+  \item \textit{Geometry} --- In most Monte Carlo codes, the basic geometry
+    primitives are represented using \textit{constructive solid geometry},
+    whereby regions of volume are defined as the intersection, union, or
+    difference of curved surfaces that bound them. By taking advantage of
+    repeating structures, it is possible to fully describe the geometry with a
+    very modest amount of memory. One important point to recognize is that Monte
+    Carlo particle transport simulations do not require a mesh-based geometry.
+  \item \textit{Interaction cross sections} --- The random walk of each particle
+    will be governed by various probability distributions, which in turn are
+    determined by evaluated nuclear data. The cross sections are a function of
+    energy and temperature, which make their evaluation in non-isothermal
+    problems considerably more difficult. The memory required to store these
+    cross sections will be directly related to the number of nuclides present in
+    the system as well as the number of temperatures that the data need to be
+    stored at.
+  \item \textit{Tallies} --- Tallies are the results of the simulations and are
+    generally user-defined physical quantities, such as reaction rates and
+    neutron fluxes. In most Monte Carlo codes, the user can specify a region of
+    volume over which the results should be integrated. Again, the memory
+    requirements will be directly proportional to the number of quantities that
+    are desired.
+\end{enumerate}
+
 Currently, the major impediment to using Monte Carlo methods for reactor
 analysis is the fact that the parallel algorithms still generally rely on each
 program instance storing the full geometry, interaction cross sections, and
@@ -124,6 +173,8 @@ simulations. For reactor analysis, however, the size of the cross section and
 tally data can easily exceed the memory available on a single node. Siegel et
 al. \cite{jcp-siegel-2012-2} estimate that cross section data could
 hypothetically exceed 100 GB and tally data could exceed 0.5 TB.
+
+\subsection{Decomposition Algorithms}
 
 In order to treat realistic reactor problems, an algorithm that is capable of
 dealing with limited per-node memory must be employed. Two general strategies
@@ -722,6 +773,24 @@ processors. However, doing so would not change the overall conclusion that under
 normal circumstances, the memory requirements are not a formidable challenge to
 successfully employing the tally server algorithm.
 
+\subsection{Influence of Variance Reduction Schemes}
+
+Our foregoing estimates of $f$ were based on direct measurements from the OpenMC
+code where no variance reduction schemes, such as survival biasing, were
+used. In a calculation with survival biasing, particles which might have
+otherwise been absorbed would continue on their random walk resulting in more
+collisions. Thus, the measured $f$ would certainly be higher if survival biasing
+is used. For the Monte Carlo performance benchmark, we find that using survival
+biasing with a cutoff weight of 0.25 increases the number of tracks per particle
+from 21.3 to 24.1 --- an increase in $f$ of about 13\%. At the same time
+however, the time to simulate a single particle will increase proportionally
+with the total number of collisions it experiences. Using survival biasing with
+a cutoff weight of 0.25, the average time to simulate a particle, $\mu$,
+increases by about 14\% over a simulation with no survival biasing. Therefore,
+we expect there to be little net effect of the use of survival biasing on the
+tally server overhead. Similar calculations made with a lower cutoff weight also
+lead us to the same conclusion.
+
 \subsection{Dependence of \texorpdfstring{$\mu$ on $d$}{u on d}}
 
 To this point, we have assumed that $\mu$ is independent of all other parameters
@@ -1088,6 +1157,28 @@ out to study.
   \label{fig:titan-cs}
 \end{figure}
 
+Given the small increase in overhead with increasing numbers of processes
+observed in \autoref{fig:intrepid-cs} and \autoref{fig:titan-cs}, we expect that
+simulations utilizing tally servers on hundreds of thousands of processes or
+more should be possible. However, problems can and do happen when attempting to
+extend a communication-intensive algorithm to such large numbers of processes;
+as one example, many MPI implementations are not able to handle more than tens
+of millions of messages per second. Depending on the nature of the simulation,
+it is possible that such limits could be exceeded or that other problems
+relating to network contention could be experienced. Thus, future tests of the
+tally server algorithm on $10^5$ processes or more are warranted to assess its
+feasibility for large-scale simulations.
+
+One should note that we have not directly compared the results here to the
+predictions in \autoref{sec:analysis}. The performance model developed in
+\autoref{sec:analysis} was intentionally over-simplified and intended to give a
+broad sense of the feasibility of the algorithm as well as an intuitive feel for
+how the performance might behave as a function of various parameters. We would
+not expect exact agreement since the performance model does not account for
+various factors that we have discussed: network topology, network contention,
+variation in the time to simulate a particle, and other sources of overhead
+within the MPI implementation.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Conclusions}
 
@@ -1121,28 +1212,44 @@ One point that was made earlier was that the algorithm presented here does not
 reduce the burden of large cross section data. For realistic reactor analysis,
 cross section data may well reach into the hundreds of gigabytes owing to the
 fact that cross section libraries would be needed at a multitude of
-temperatures. That being said, there is a considerable amount of research and
-development in the area of on-the-fly evaluation of effective cross sections at
-any temperature. We mention in passing two promising efforts to that end --- the
-work of Yesilyurt on on-the-fly Doppler broadening \cite{nse-yesilyurt-2012} and
-the work of Viitanen on explicit temperature treatment
-\cite{nse-viitanen-2012}. The latter development would enable simulation using 0
-K cross sections but with a significant performance penalty. In general, this
-and other improvements in physics methods will likely lead to slower simulations
-but with higher fidelity. From the perspective of the tally server model, these
-developments will increase $\mu$ and consequently decrease the communication
-overhead.
+temperatures. A natural question then is whether a data decomposition algorithm
+based on servers could also ameliorate the per-process memory footprint for
+cross sections. Such an algorithm would unfortunately be considerably more
+complicated than the one we have presented here. For example, since the cross
+section data needed at each interaction are not contiguous in memory, the server
+process would first have to assemble the data into an array to send to the
+compute process. Along with the integrated cross sections, the compute process
+would also need secondary angle and energy distributions, which in general are
+of variable length in memory, for each possible reaction the particle might
+undergo since the exact reaction to be sampled is not known at the time the
+cross sections are evaluated. Due to these complexities and given that other
+promising research efforts may significantly reduce cross section memory
+requirements, an algorithm to decompose cross section data was not considered as
+part of the present work. Two current efforts towards on-the-fly evaluation of
+effective cross sections at any temperature are worth mentioning as possible
+solutions to this problem --- the work of Yesilyurt on on-the-fly Doppler
+broadening \cite{nse-yesilyurt-2012} and the work of Viitanen on explicit
+temperature treatment \cite{nse-viitanen-2012}. The latter development would
+enable simulation using 0 K cross sections but with a significant performance
+penalty. In general, this and other improvements in physics methods will likely
+lead to slower simulations but with higher fidelity. From the perspective of the
+tally server model, these developments will increase $\mu$ and consequently
+decrease the communication overhead.
 
 On the hardware end, improvements in supercomputer architectures may continue to
 reduce network latency and improve bandwidth, at least in the short-term. Again,
-this will largely benefit the tally server algorithm. Since incrementing tallies
-can naturally be expressed as a fetch-and-add atomic operation, there is also
-potential to exploit remote direct memory access (RDMA) operations either
-explicitly (e.g., using MPI-2) or implicitly through a partitioned global
-address space (e.g., Fortran co-arrays). Modern network interconnects should be
-able to take advantage of RDMA operations. In addition, the requirement that
-servers and compute processes be disjoint could be obviated by the use of RDMA,
-potentially offering further reductions in overhead.
+this will largely benefit the tally server algorithm. While improvements in
+single process calculation rates could decrease $\mu$ and increase the
+communication overhead, the fact that processor clock rates have stagnated leads
+us to believe that any single process performance gains will likely be modest.
+
+Since incrementing tallies can naturally be expressed as a fetch-and-add atomic
+operation, there is also potential to exploit remote direct memory access (RDMA)
+operations either explicitly (e.g., using MPI-2) or implicitly through a
+partitioned global address space (e.g., Fortran co-arrays). Modern network
+interconnects should be able to take advantage of RDMA operations. In addition,
+the requirement that servers and compute processes be disjoint could be obviated
+by the use of RDMA, potentially offering further reductions in overhead.
 
 One potential downside to the algorithm presented here is that it considerably
 complicates the use of threading via OpenMP. The most natural means of obtaining
@@ -1156,8 +1263,11 @@ efficiently combine a tally server model with on-node shared-memory parallelism.
 
 As a final comment, one should recognize the fact that the algorithm presented
 here has primarily been presented with a focus and intent on applications in LWR
-analysis. For other types of analysis performed with Monte Carlo, it may turn
-out that the tally server algorithm does not make sense.
+analysis. For other types of analysis performed with Monte Carlo, even those
+with similarly large memory requirements such as radiography image generation,
+it may turn out that a tally server algorithm does not make sense. Separate
+analyses would need to be made to evaluate the suitability of a tally server
+algorithm for data decomposition as applied to other disciplines.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section*{Acknowledgments}

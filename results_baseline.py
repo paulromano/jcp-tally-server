@@ -25,7 +25,7 @@ with open('data/results_intrepid.csv','r') as fh:
         if i < 1:
             continue
         elif i < 8:
-            intrepid_d[i-1] = int(row[10])
+            intrepid_d[i-1] = int(row[10]) * 6 * 8
             intrepid_mu[i-1] = float(row[12])/(2000*10)
         else:
             break
@@ -38,7 +38,7 @@ with open('data/results_titan.csv','r') as fh:
         if i < 1:
             continue
         elif i < 8:
-            titan_d[i-1] = int(row[9])
+            titan_d[i-1] = int(row[9]) * 6 * 8
             titan_mu[i-1] = float(row[11])/(2000*10)
         else:
             break
