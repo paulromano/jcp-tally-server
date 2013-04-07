@@ -779,18 +779,18 @@ successfully employing the tally server algorithm.
 Our foregoing estimates of $f$ were based on direct measurements from the OpenMC
 code where no variance reduction schemes, such as survival biasing, were
 used. In a calculation with survival biasing, particles which might have
-otherwise have been absorbed would continue on their random walk resulting in
-more collisions. Thus, the measured $f$ would certainly be higher if survival
-biasing is used. For the Monte Carlo performance benchmark, we find that using
-survival biasing with a cutoff weight of 0.25 increases the number of tracks per
-particle from 21.3 to 24.1 --- an increase in $f$ of about 13\%. At the same
-time however, the time to simulate a single particle will increase
-proportionally with the total number of collisions it experiences. Using
-survival biasing with a cutoff weight of the 0.25, the average time to simulate
-a particle, $\mu$, increases by about 14\% over a simulation with no survival
-biasing. Therefore, we expect there to be little net effect of the use of
-survival biasing on the tally server overhead. Similar calculations made with a
-lower cutoff weight also lead us to the same conclusion.
+otherwise been absorbed would continue on their random walk resulting in more
+collisions. Thus, the measured $f$ would certainly be higher if survival biasing
+is used. For the Monte Carlo performance benchmark, we find that using survival
+biasing with a cutoff weight of 0.25 increases the number of tracks per particle
+from 21.3 to 24.1 --- an increase in $f$ of about 13\%. At the same time
+however, the time to simulate a single particle will increase proportionally
+with the total number of collisions it experiences. Using survival biasing with
+a cutoff weight of 0.25, the average time to simulate a particle, $\mu$,
+increases by about 14\% over a simulation with no survival biasing. Therefore,
+we expect there to be little net effect of the use of survival biasing on the
+tally server overhead. Similar calculations made with a lower cutoff weight also
+lead us to the same conclusion.
 
 \subsection{Dependence of \texorpdfstring{$\mu$ on $d$}{u on d}}
 
@@ -1266,7 +1266,7 @@ As a final comment, one should recognize the fact that the algorithm presented
 here has primarily been presented with a focus and intent on applications in LWR
 analysis. For other types of analysis performed with Monte Carlo, even those
 with similarly large memory requirements such as radiography image generation,
-it may turn out that the tally server algorithm does not make sense. Separate
+it may turn out that a tally server algorithm does not make sense. Separate
 analyses would need to be made to evaluate the suitability of a tally server
 algorithm for data decomposition as applied to other disciplines.
 
