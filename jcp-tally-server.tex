@@ -69,11 +69,11 @@ An algorithm for decomposing large tally data in Monte Carlo particle transport
 simulations is developed, analyzed, and implemented in a continuous-energy Monte
 Carlo code, OpenMC. The algorithm is based on a non-overlapping decomposition of
 compute nodes into \emph{tracking processors} and \emph{tally servers}. The
-former are used simulate the movement of particles through the domain while the
-latter continuously receive and update tally data. A performance model for this
-approach is developed, suggesting that, for a range of parameters relevant to
-LWR analysis, the tally server algorithm should perform with minimal overhead on
-contemporary supercomputers. An implementation of the algorithm in OpenMC is
+former are used to simulate the movement of particles through the domain while
+the latter continuously receive and update tally data. A performance model for
+this approach is developed, suggesting that, for a range of parameters relevant
+to LWR analysis, the tally server algorithm should perform with minimal overhead
+on contemporary supercomputers. An implementation of the algorithm in OpenMC is
 then tested on the Intrepid and Titan supercomputers, supporting the key
 predictions of the model over a wide range of parameters. We thus conclude that
 the tally server algorithm is a successful approach to circumventing classical
@@ -755,7 +755,7 @@ number of a tally servers, the range of total tally memory that can be
 reasonably accommodated. Let us suppose we wanted to perform a simulation using
 all nodes on the Mira Blue Gene/Q supercomputer at Argonne National
 Laboratory. This supercomputer has 48 racks each having 1024 nodes, each of
-which in turn has a 16 core processor for a total of 786,432 cores. Each node
+which in turn has a 16-core processor for a total of 786,432 cores. Each node
 has $M_n = 16 \cdot 10^9$ bytes of memory. Assuming a support ratio of $c/s =
 15$, we would need 49,152 servers. Thus, \eqref{eq:constraint-memory} implies
 that
@@ -833,7 +833,7 @@ is accounted for explicitly by measuring $\mu$ over a range of $d$.
 The algorithm described in \autoref{sec:algorithm} was implemented in OpenMC
 \cite{ane-romano-2013}, an open source Monte Carlo neutronic simulation software
 package recently developed at MIT capable of performing calculations on
-arbitrary 3D geometries with continuous-energy cross-sections. OpenMC was
+arbitrary 3D geometries with continuous-energy cross sections. OpenMC was
 written with a focus on scalable algorithms for leadership-class supercomputers
 and has demonstrated weak scaling up to hundreds of thousands of processors on
 ALCF's Intrepid and OLCF's Jaguar supercomputers \cite{ane-romano-2013}. The
